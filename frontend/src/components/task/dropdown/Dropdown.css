@@ -1,0 +1,16 @@
+/* Dropdown.css */
+.dropdown-animated {
+    transition: max-height 0.5s ease, opacity 0.3s ease 0.2s, padding 0.3s ease 0.2s;
+    overflow: hidden;
+}
+
+.dropdown-open {
+    max-height: 400px; /* Adjust to a reasonable maximum height for content */
+    opacity: 1; /* Visible state */
+    padding: 1rem; /* Add padding when open */
+}
+.dropdown-closed {
+    max-height: 0; /* Collapsed state */
+    opacity: 0; /* Invisible state */
+    padding: 0; /* Remove padding when closed */
+}

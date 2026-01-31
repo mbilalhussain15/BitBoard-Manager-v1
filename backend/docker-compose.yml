@@ -1,0 +1,232 @@
+version: "3.9"
+
+services:
+  auth-service:
+    build:
+      context: ./services/authService
+    container_name: auth-service
+    working_dir: /app/services/authService
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    volumes:
+      # Mount the ENTIRE backend folder to /app
+      - type: bind
+        source: .
+        target: /app
+      # Keep container-local node_modules
+      - /app/services/authService/node_modules
+    command: npm run dev
+    depends_on:
+      - workspace-service
+      - rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  workspace-service:
+    build:
+      context: ./services/workspaceService
+    container_name: workspace-service
+    working_dir: /app/services/workspaceService
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+      - /app/services/workspaceService/node_modules
+    command: npm run dev
+    depends_on:
+      - rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # Web UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build:
+      context: ../frontend                 # compose file is in backend/
+    container_name: frontend
+    image: frontend
+    ports:
+      - "5173:5173"
+    env_file:
+      - ../frontend/.env
+    volumes:
+      - type: bind
+        source: ../frontend
+        target: /app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    depends_on:
+      - auth-service
+      - workspace-service
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  rabbitmq_data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # version: "3.9"
+# services:
+#   auth-service:
+#       build:
+#         context: ./services/authService
+#       container_name: auth-service
+#       ports:
+#         - "5001:5001"   # andar jo port aapke auth service me listen ho rahi hai
+#       env_file:
+#         - .env
+#       volumes:
+#         - ./services/authService:/app
+#         - ./sharedConfig.js:/app/sharedConfig.js:ro
+#         - /app/node_modules
+#       command: npm run dev
+#       depends_on:
+#         - workspace-service
+#       logging:
+#         driver: "json-file"
+#         options:
+#           max-size: "10m"
+#           max-file: "3"
+
+#   workspace-service:
+#     build:
+#       context: ./services/workspaceService
+#     container_name: workspace-service
+#     ports:
+#       - "5002:5002"   # andar jo port aapke workspace service me listen ho rahi hai
+#     env_file:
+#       - .env
+#     volumes:
+#       - ./services/workspaceService:/app
+#       - ./sharedConfig.js:/app/sharedConfig.js:ro
+#       - /app/node_modules
+#     command: npm run dev
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "10m"
+#         max-file: "3"
+
+
+#   rabbitmq:
+#     image: rabbitmq:3.13-management
+#     container_name: rabbitmq
+#     ports:
+#       - "5672:5672"   # AMQP
+#       - "15672:15672" # Web UI
+#     environment:
+#       RABBITMQ_DEFAULT_USER: guest
+#       RABBITMQ_DEFAULT_PASS: guest
+#     healthcheck:
+#       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     volumes:
+#       - rabbitmq_data:/var/lib/rabbitmq
+#     restart: unless-stopped
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "10m"
+#         max-file: "3"
+
+#   # ---- Frontend: dev (hot reload) ----
+#   frontend:
+#     build:
+#       context: ../frontend        # because compose file is in backend/
+#       # target: dev
+#     container_name: frontend
+#     image: frontend
+#     ports:
+#       - "5173:5173"
+#     volumes:
+#       - ../frontend:/app
+#       - /app/node_modules
+#     env_file:
+#       - ../frontend/.env          # exposes VITE_* vars for dev build/HMR :contentReference[oaicite:3]{index=3}
+#     command: npm run dev -- --host 0.0.0.0 --port 5173
+#     depends_on:
+#       - auth-service
+#       - workspace-service
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "10m"
+#         max-file: "3"
+#   # # ---- Frontend: prod (Node server) ----
+#   # frontend-prod:
+#   #   build:
+#   #     context: ../frontend
+#   #     target: prod
+#   #   container_name: frontend-prod
+#   #   ports:
+#   #     - "8080:3000"
+#   #   env_file:
+#   #     - ../frontend/.env          # VITE_* are compile-time; useful if you rebuild inside compose :contentReference[oaicite:4]{index=4}
+#   #   depends_on:
+#   #     - auth-service
+#   #     - workspace-service
+
+# volumes:
+#   rabbitmq_data:

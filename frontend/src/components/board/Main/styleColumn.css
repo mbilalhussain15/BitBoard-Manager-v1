@@ -1,0 +1,25 @@
+  .custom-container {
+    height: 10vh; /* Viewport height */
+    min-height: 50px; /* Minimum height */
+  }
+
+  /* board scrolls only horizontally; vertical stays visible */
+.boardScroll-x {
+  overflow-x: auto;
+  overflow-y: visible;
+  user-select: none;
+  touch-action: pan-x;
+}
+
+/* the only vertical scroll parent inside a Column */
+/* .taskList-scroll {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  overflow-x: hidden;
+} */
+
+/* your existing empty state is fine to keep */
+/* .custom-container {
+  height: 75vh;
+  min-height: 100px;
+} */

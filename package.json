@@ -1,0 +1,17 @@
+{  "name": "bitboard-manager-v0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm --prefix frontend run dev\" \"npm --prefix Code-Sync-main/client run dev -- --port 5174\""  
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+   "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+  }
+

@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "workspaces": [
+    "services/authService",
+    "services/workspaceService",
+    "services/commentService",
+    "services/ai-PlannerService",
+    "services/codeSyncService"
+  ],
+  "scripts": {
+    "start:authService": "npm --prefix ./services/authService run dev",
+    "start:workspaceService": "npm --prefix ./services/workspaceService run dev",
+    "start:commentService": "npm --prefix ./services/commentService run dev",
+    "start:ai-PlannerService": "npm --prefix ./services/ai-PlannerService run dev",
+    "start:codeSyncService": "npm --prefix ./services/codeSyncService run dev",
+    "start": "concurrently --kill-others-on-fail -n authService,workspaceService,commentService,ai-PlannerService,codeSyncService -c green,blue,magenta,cyan,yellow \"npm run start:authService\" \"npm run start:workspaceService\" \"npm run start:commentService\" \"npm run start:ai-PlannerService\" \"npm run start:codeSyncService\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.78",
+    "@langchain/langgraph": "^0.4.9",
+    "amqplib": "^0.10.9",
+    "disposable-email-domains": "^1.0.62",
+    "email-validator": "^2.0.4",
+    "express-useragent": "^1.0.15",
+    "geoip-lite": "^1.4.10",
+    "helmet": "^8.1.0",
+    "mime": "^4.1.0",
+    "multer": "^2.0.2",
+    "openai": "^6.5.0",
+    "rate-limiter-flexible": "^7.3.1",
+    "uuid": "^13.0.0"
+  }
+}
